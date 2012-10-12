@@ -7,7 +7,8 @@
 //
 
 // External stuff
-#import <SDWebImage/UIImageView+WebCache.h>
+#import "UIImageView+WebCache.h"
+
 // Own stuff
 #import "Configuration.h"
 #import "ViewController.h"
@@ -19,6 +20,7 @@
 @property (nonatomic, strong) IBOutlet UILabel *loading;
 @property (nonatomic, strong) NSArray *photos;
 @property (nonatomic, strong) NSMutableArray *data;
+@property (nonatomic, strong) NSMutableArray *pictures;
 @property (nonatomic, strong) UICollectionViewFlowLayout *flowLayout;
 
 @end
@@ -30,6 +32,7 @@
     [super viewDidLoad];
     
     // Set title navigation bar
+    
     self.title = @"Kitties";
     
     // Set size of pictures based on device orientation
@@ -95,7 +98,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         
         NSString *url = [[Configuration sharedInstance] ApiUrl];
-        NSString *method = @"list/96";
+        NSString *method = @"list/60";
         NSString *uri = [NSString stringWithFormat: @"%@%@", url, method];
         
         NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:uri]];
@@ -168,14 +171,57 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *photo = [self.data objectAtIndex:indexPath.row];
+    NSMutableArray *pictures = [[NSMutableArray alloc] init];
     
+    for(NSDictionary *picture in self.data) {
+        MWPhoto *photo = [MWPhoto photoWithURL:[NSURL URLWithString:[picture objectForKey:@"image"]]];
+        photo.caption = [picture objectForKey:@"name"];
+        [pictures addObject:photo];
+    }
     
-    NSLog(@"clicked name is: %@",[photo objectForKey:@"name"]);
+    self.pictures = pictures;
     
-//    self.detailViewController.photo = [data objectAtIndex:[indexPath row]];
-//    
-//    [self.navigationController pushViewController:self.detailViewController animated:YES];
+    MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate:self];
+    [photoBrowser setInitialPageIndex:[indexPath row]];
+    photoBrowser.displayActionButton = YES;
+    
+    photoBrowser.actionButtons = [NSArray arrayWithObjects:NSLocalizedString(@"Save", nil), nil];
+    photoBrowser.destructiveButton = NSLocalizedString(@"Report", nil);
+    photoBrowser.cancelButton = NSLocalizedString(@"Cancel", nil);
+    
+    [self.navigationController pushViewController:photoBrowser animated:YES];
+
+}
+
+- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
+    return [self.pictures count];
+}
+
+- (MWPhoto *)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+    if (index < [self.pictures count])
+        return [self.pictures objectAtIndex:index];
+    return nil;
+}
+
+- (void) photoBrowser:(MWPhotoBrowser *)photoBrowser actionIndex:(NSUInteger)index :(NSUInteger)photoIndex {
+    switch(index){
+        case 0:
+            // Report image
+            [self reportImage:(photoIndex)];
+            break;
+        case 1:
+            // Save image
+            [self saveImage:(photoIndex)];
+            break;
+    }
+}
+
+- (void) saveImage:(NSUInteger)pageIndex {
+    NSLog(@"Save image! %@",[self.data objectAtIndex:pageIndex]);
+}
+
+- (void) reportImage:(NSUInteger)pageIndex {
+    NSLog(@"Report image! %@",[self.data objectAtIndex:pageIndex]);
 }
 
 @end
