@@ -10,8 +10,8 @@
 
 @implementation CVCell
 
-@synthesize titleLabel = _titleLabel;
 @synthesize photo = _photo;
+@synthesize loading = _loading;
 
 - (id)initWithFrame:(CGRect)frame
 {

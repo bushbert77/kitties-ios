@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>ApiUrl</key>
-	<string>http://intense-headland-5646.herokuapp.com/</string>
+	<string>http://intense-headland-5646.herokuapp.com</string>
 </dict>
 </plist>

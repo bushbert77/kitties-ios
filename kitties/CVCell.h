@@ -10,7 +10,7 @@
 
 @interface CVCell : UICollectionViewCell
 
-@property (nonatomic, strong) IBOutlet UILabel *titleLabel;
 @property (nonatomic, strong) IBOutlet UIImageView *photo;
+@property (nonatomic, strong) IBOutlet UIActivityIndicatorView *loading;
 
 @end
