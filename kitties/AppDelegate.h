@@ -7,13 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CustomNavigationController.h"
 
 @class ViewController;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate> {
-    UINavigationController *navigationController;
+    CustomNavigationController *navigationController;
 }
-@property (strong, nonatomic) UINavigationController *navigationController;
+@property (strong, nonatomic) CustomNavigationController *navigationController;
 @property (strong, nonatomic) UIWindow *window;
 
 @end

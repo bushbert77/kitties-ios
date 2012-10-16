@@ -39,6 +39,9 @@
 		5D51A0A6162836E200FFA538 /* pattern@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A095162836E200FFA538 /* pattern@2x.png */; };
 		5D51A0A7162836E200FFA538 /* Configuration.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D51A096162836E200FFA538 /* Configuration.m */; };
 		5D51A0A8162836E200FFA538 /* Configuration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A097162836E200FFA538 /* Configuration.plist */; };
+		5D7DF700162C882D0011FFB3 /* InfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D7DF6FE162C882D0011FFB3 /* InfoViewController.m */; };
+		5D7DF701162C882D0011FFB3 /* InfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D7DF6FF162C882D0011FFB3 /* InfoViewController.xib */; };
+		5D7DF70D162CA7E20011FFB3 /* koen.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 5D7DF70C162CA7E20011FFB3 /* koen.jpg */; };
 		5D8D91AF1628A41700AF8CC6 /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D8D91871628A41700AF8CC6 /* MWCaptionView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5D8D91B01628A41700AF8CC6 /* MWPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D8D91891628A41700AF8CC6 /* MWPhoto.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		5D8D91B11628A41700AF8CC6 /* MWPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D8D918B1628A41700AF8CC6 /* MWPhotoBrowser.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -69,6 +72,7 @@
 		5D994AC2162B1F3300553AEB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D994AC1162B1F3200553AEB /* SystemConfiguration.framework */; };
 		5D994AC4162B1F3A00553AEB /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D994AC3162B1F3A00553AEB /* MobileCoreServices.framework */; };
 		5D994ACC162B33F300553AEB /* ApiClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D994ACB162B33F300553AEB /* ApiClient.m */; };
+		5DA44C83162D8FAF00151A42 /* CustomNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA44C82162D8FAF00151A42 /* CustomNavigationController.m */; };
 		5DB96B06162843DA000DCD31 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB96B05162843DA000DCD31 /* QuartzCore.framework */; };
 		5DDE7583162985B800E362B5 /* check_mark.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DDE757F162985B800E362B5 /* check_mark.png */; };
 		5DDE7584162985B800E362B5 /* check_mark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DDE7580162985B800E362B5 /* check_mark@2x.png */; };
@@ -116,6 +120,10 @@
 		5D51A095162836E200FFA538 /* pattern@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pattern@2x.png"; sourceTree = "<group>"; };
 		5D51A096162836E200FFA538 /* Configuration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Configuration.m; sourceTree = "<group>"; };
 		5D51A097162836E200FFA538 /* Configuration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Configuration.plist; sourceTree = "<group>"; };
+		5D7DF6FD162C882D0011FFB3 /* InfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoViewController.h; sourceTree = "<group>"; };
+		5D7DF6FE162C882D0011FFB3 /* InfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoViewController.m; sourceTree = "<group>"; };
+		5D7DF6FF162C882D0011FFB3 /* InfoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InfoViewController.xib; sourceTree = "<group>"; };
+		5D7DF70C162CA7E20011FFB3 /* koen.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = koen.jpg; sourceTree = "<group>"; };
 		5D8D91861628A41700AF8CC6 /* MWCaptionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWCaptionView.h; sourceTree = "<group>"; };
 		5D8D91871628A41700AF8CC6 /* MWCaptionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWCaptionView.m; sourceTree = "<group>"; };
 		5D8D91881628A41700AF8CC6 /* MWPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPhoto.h; sourceTree = "<group>"; };
@@ -176,6 +184,8 @@
 		5D994AC3162B1F3A00553AEB /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		5D994ACA162B33F300553AEB /* ApiClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiClient.h; sourceTree = "<group>"; };
 		5D994ACB162B33F300553AEB /* ApiClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiClient.m; sourceTree = "<group>"; };
+		5DA44C81162D8FAF00151A42 /* CustomNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomNavigationController.h; sourceTree = "<group>"; };
+		5DA44C82162D8FAF00151A42 /* CustomNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomNavigationController.m; sourceTree = "<group>"; };
 		5DB96B05162843DA000DCD31 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		5DDE757F162985B800E362B5 /* check_mark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = check_mark.png; sourceTree = "<group>"; };
 		5DDE7580162985B800E362B5 /* check_mark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "check_mark@2x.png"; sourceTree = "<group>"; };
@@ -267,6 +277,8 @@
 		5D51A05D162834F200FFA538 /* kitties */ = {
 			isa = PBXGroup;
 			children = (
+				5DA44C7F162D8F4B00151A42 /* Navigation controller */,
+				5D7DF6FB162C87C40011FFB3 /* Info view */,
 				5D994AC9162B33C900553AEB /* API client */,
 				5D663FC716286F83005FDE0E /* App delegate */,
 				5D0AC36216283F5600262BEE /* Libraries */,
@@ -304,6 +316,7 @@
 		5D51A088162836E200FFA538 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				5D7DF70C162CA7E20011FFB3 /* koen.jpg */,
 				5DDE757F162985B800E362B5 /* check_mark.png */,
 				5DDE7580162985B800E362B5 /* check_mark@2x.png */,
 				5DDE7581162985B800E362B5 /* err_mark.png */,
@@ -351,6 +364,16 @@
 				5D51A067162834F200FFA538 /* AppDelegate.m */,
 			);
 			name = "App delegate";
+			sourceTree = "<group>";
+		};
+		5D7DF6FB162C87C40011FFB3 /* Info view */ = {
+			isa = PBXGroup;
+			children = (
+				5D7DF6FD162C882D0011FFB3 /* InfoViewController.h */,
+				5D7DF6FE162C882D0011FFB3 /* InfoViewController.m */,
+				5D7DF6FF162C882D0011FFB3 /* InfoViewController.xib */,
+			);
+			name = "Info view";
 			sourceTree = "<group>";
 		};
 		5D8D91841628A41700AF8CC6 /* MWPhotoBrowser */ = {
@@ -464,6 +487,15 @@
 			name = "API client";
 			sourceTree = "<group>";
 		};
+		5DA44C7F162D8F4B00151A42 /* Navigation controller */ = {
+			isa = PBXGroup;
+			children = (
+				5DA44C81162D8FAF00151A42 /* CustomNavigationController.h */,
+				5DA44C82162D8FAF00151A42 /* CustomNavigationController.m */,
+			);
+			name = "Navigation controller";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -545,6 +577,8 @@
 				5DDE7584162985B800E362B5 /* check_mark@2x.png in Resources */,
 				5DDE7585162985B800E362B5 /* err_mark.png in Resources */,
 				5DDE7586162985B800E362B5 /* err_mark@2x.png in Resources */,
+				5D7DF701162C882D0011FFB3 /* InfoViewController.xib in Resources */,
+				5D7DF70D162CA7E20011FFB3 /* koen.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -584,6 +618,8 @@
 				5D994ABE162B1A3800553AEB /* AFXMLRequestOperation.m in Sources */,
 				5D994ABF162B1A3800553AEB /* UIImageView+AFNetworking.m in Sources */,
 				5D994ACC162B33F300553AEB /* ApiClient.m in Sources */,
+				5D7DF700162C882D0011FFB3 /* InfoViewController.m in Sources */,
+				5DA44C83162D8FAF00151A42 /* CustomNavigationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

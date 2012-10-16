@@ -13,43 +13,17 @@
 
 @synthesize navigationController;
 
-- (void)customizeAppearance
-{
-    // Create resizable images
-    UIImage *portrait = [[UIImage imageNamed:@"navigation-bar-bg.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
-    UIImage *landscape = [[UIImage imageNamed:@"navigation-bar-bg-landscape.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    // Set the background image for *all* UINavigationBars
-    [[UINavigationBar appearance] setBackgroundImage:portrait forBarMetrics:UIBarMetricsDefault];
-    [[UINavigationBar appearance] setBackgroundImage:landscape forBarMetrics:UIBarMetricsLandscapePhone];
-    [[UINavigationBar appearance] setShadowImage:[UIImage imageNamed:@"navigation-bar-shadow.png"]];
-    
-    // Customize the title text for *all* UINavigationBars
-    NSDictionary *textTitleOptions = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      [UIColor whiteColor],
-                                      UITextAttributeTextColor,
-                                      [UIColor colorWithRed:0 green:0 blue:0 alpha:0],
-                                      UITextAttributeTextShadowColor,
-                                      [NSValue valueWithUIOffset:UIOffsetMake(0, 1)],
-                                      UITextAttributeTextShadowOffset,
-                                      [UIFont fontWithName:@"GiddyupStd" size:28],
-                                      UITextAttributeFont,
-                                      nil];
-    
-    [[UINavigationBar appearance] setTitleTextAttributes: textTitleOptions];
-}
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    [self customizeAppearance];
-    
+    // Init first view controller (collection view)
     UIViewController *rootController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
     
-    self.navigationController = [[UINavigationController alloc] initWithRootViewController:rootController];
+    // Init navigation controller
+    self.navigationController = [[CustomNavigationController alloc] initWithRootViewController:rootController];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window addSubview:self.navigationController.view];
-    self.window.rootViewController = self.navigationController;
+    [self.window setRootViewController:self.navigationController];
     [self.window makeKeyAndVisible];
     return YES;
 }

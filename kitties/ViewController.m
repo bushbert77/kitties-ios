@@ -16,6 +16,7 @@
 #import "ApiClient.h"
 #import "ViewController.h"
 #import "CVCell.h"
+#import "InfoViewController.h"
 
 @interface ViewController ()
 
@@ -34,9 +35,13 @@
 @implementation ViewController
 
 // View did load
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
+    
+    // Add info button to navigation bar
+    UIButton *infoButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    [infoButton addTarget:self action:@selector(showInfo:) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:infoButton];
     
     // Set title navigation bar
     self.title = @"Kitties";
@@ -63,8 +68,7 @@
     
 }
 // View appears
--(void)viewWillAppear:(BOOL)animated
-{
+-(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
 }
@@ -78,6 +82,16 @@
     self.pictures = nil;
     self.total = nil;
 }
+
+// Push info view
+-(void)showInfo: (UIBarButtonItem *)sender {
+    UIViewController *infoViewController = [[InfoViewController alloc] initWithNibName:@"InfoViewController" bundle:nil];
+    [self.navigationController presentViewController:infoViewController animated:NO completion:nil];
+    [self.navigationController dismissViewControllerAnimated:NO completion: nil];
+    [self.navigationController pushViewController:infoViewController animated:YES];
+}
+
+// Load kitties again!
 -(void)handleRefresh:(UIRefreshControl *)refreshControl {
     self.photos = nil;
     self.data = nil;
@@ -188,8 +202,10 @@
     [self.collectionView setCollectionViewLayout:self.flowLayout];
     [self.collectionView autoresizingMask];
     [self.collectionView autoresizesSubviews];
+    
     // Set background pattern
     [self.collectionView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern.png"]]];
+    
 }
 // Number of sections in collection view
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -330,5 +346,13 @@
 //        
 //    }
 //}
+
+-(BOOL)shouldAutorotate {
+    return YES;
+}
+
+-(NSUInteger)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskAll;
+}
 
 @end
