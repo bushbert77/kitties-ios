@@ -112,6 +112,8 @@
 }
 // Call API to load kitties
 - (void)loadKitties:(int)limit :(int)skip {
+    
+    self.navigationController.navigationBar.userInteractionEnabled = NO;
         
     NSString *path = [NSString stringWithFormat:@"/list/%d/%d", limit, skip];
     
@@ -134,6 +136,8 @@
         [self.loading removeFromSuperview];
         [self hideProgressHUD:@"" :NO];
         [self.refreshControl endRefreshing];
+        
+        self.navigationController.navigationBar.userInteractionEnabled = YES;
     } failure:nil];
 }
 

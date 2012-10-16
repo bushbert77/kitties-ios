@@ -28,8 +28,18 @@
     return self;
 }
 
+//-(void)popView: (UIBarButtonItem *)sender {
+//    [self.navigationController popViewControllerAnimated:YES];
+//}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+//    UIImage *buttonBackground = [[UIImage imageNamed:@"back"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 25, 0, 5) resizingMode:UIImageResizingModeStretch];
+//    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(popView:)];
+//    [backButton setBackgroundImage:buttonBackground forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+//    [self.navigationItem setLeftBarButtonItem:backButton];
+//    [self.navigationItem setHidesBackButton:YES];
     
     // Set background pattern
     [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern.png"]]];

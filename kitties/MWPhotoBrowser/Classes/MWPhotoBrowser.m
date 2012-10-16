@@ -424,6 +424,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         [self.navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
         [self.navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsLandscapePhone];
     }
+    [[UIBarButtonItem appearance] setTintColor:nil];
 }
 
 - (void)storePreviousNavBarAppearance {
@@ -450,6 +451,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
             previousViewController.navigationItem.backBarButtonItem = _previousViewControllerBackButton;
             self.previousViewControllerBackButton = nil;
         }
+        [[UIBarButtonItem appearance] setTintColor:[UIColor colorWithRed:215/255.0f green:118/255.0f blue:0/255.0f alpha:1]];
     }
 }
 

@@ -38,6 +38,15 @@
                                       nil];
     
     [[UINavigationBar appearance] setTitleTextAttributes: textTitleOptions];
+    
+//    // Back button
+//    UIImage *buttonBack = [[UIImage imageNamed:@"back"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 13, 0, 5)];
+//    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:buttonBack forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+//    UIImage *buttonBackLandscape = [[UIImage imageNamed:@"back-landscape"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 5)];
+//    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:buttonBackLandscape forState:UIControlStateNormal barMetrics:UIBarMetricsLandscapePhone];
+    
+    
+    [[UIBarButtonItem appearance] setTintColor:[UIColor colorWithRed:215/255.0f green:118/255.0f blue:0/255.0f alpha:1]];
 }
 
 - (void)viewDidLoad {
