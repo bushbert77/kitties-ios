@@ -7,6 +7,7 @@
 //
 
 #import "CustomNavigationController.h"
+#import "ViewController.h"
 
 @interface CustomNavigationController ()
 
@@ -21,32 +22,26 @@
     UIImage *landscape = [[UIImage imageNamed:@"navigation-bar-bg-landscape.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
     
     // Set the background image for *all* UINavigationBars
-    [[UINavigationBar appearance] setBackgroundImage:portrait forBarMetrics:UIBarMetricsDefault];
-    [[UINavigationBar appearance] setBackgroundImage:landscape forBarMetrics:UIBarMetricsLandscapePhone];
-    [[UINavigationBar appearance] setShadowImage:[UIImage imageNamed:@"navigation-bar-shadow.png"]];
+    [[UINavigationBar appearanceWhenContainedIn:[CustomNavigationController class], nil] setBackgroundImage:portrait forBarMetrics:UIBarMetricsDefault];
+    [[UINavigationBar appearanceWhenContainedIn:[CustomNavigationController class], nil] setBackgroundImage:landscape forBarMetrics:UIBarMetricsLandscapePhone];
+    [[UINavigationBar appearanceWhenContainedIn:[CustomNavigationController class], nil] setShadowImage:[UIImage imageNamed:@"navigation-bar-shadow.png"]];
     
     // Customize the title text for *all* UINavigationBars
     NSDictionary *textTitleOptions = [NSDictionary dictionaryWithObjectsAndKeys:
                                       [UIColor whiteColor],
                                       UITextAttributeTextColor,
-                                      [UIColor colorWithRed:0 green:0 blue:0 alpha:0],
+                                      [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.8],
                                       UITextAttributeTextShadowColor,
                                       [NSValue valueWithUIOffset:UIOffsetMake(0, 1)],
                                       UITextAttributeTextShadowOffset,
-                                      [UIFont fontWithName:@"GiddyupStd" size:26],
+                                      [UIFont fontWithName:@"GiddyupStd" size:24],
                                       UITextAttributeFont,
                                       nil];
     
-    [[UINavigationBar appearance] setTitleTextAttributes: textTitleOptions];
+    [[UINavigationBar appearanceWhenContainedIn:[CustomNavigationController class], nil] setTitleTextAttributes: textTitleOptions];
     
-//    // Back button
-//    UIImage *buttonBack = [[UIImage imageNamed:@"back"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 13, 0, 5)];
-//    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:buttonBack forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-//    UIImage *buttonBackLandscape = [[UIImage imageNamed:@"back-landscape"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 5)];
-//    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:buttonBackLandscape forState:UIControlStateNormal barMetrics:UIBarMetricsLandscapePhone];
+    [[UINavigationBar appearanceWhenContainedIn:[CustomNavigationController class], nil] setTintColor:[UIColor colorWithRed:215/255.0f green:118/255.0f blue:0/255.0f alpha:1]];
     
-    
-    [[UIBarButtonItem appearance] setTintColor:[UIColor colorWithRed:215/255.0f green:118/255.0f blue:0/255.0f alpha:1]];
 }
 
 - (void)viewDidLoad {

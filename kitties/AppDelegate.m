@@ -20,6 +20,7 @@
     
     // Init navigation controller
     self.navigationController = [[CustomNavigationController alloc] initWithRootViewController:rootController];
+//    [self.navigationController setValue:[[CustomNavigationBar alloc]init] forKeyPath:@"navigationBar"];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window addSubview:self.navigationController.view];
