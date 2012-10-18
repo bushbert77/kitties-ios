@@ -10,9 +10,12 @@
 
 @interface Configuration : NSObject {
     NSString *ApiUrl;
+    NSNumber *NumberOfKitties;
 }
 
 @property (nonatomic, retain) NSString *ApiUrl;
+@property (nonatomic,retain) NSNumber *NumberOfKitties;
+@property (nonatomic,retain) NSNumber *IncreaseOfInterestingness;
 
 + (Configuration *)sharedInstance;
 

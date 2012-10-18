@@ -11,6 +11,8 @@
 @implementation Configuration
 
 @synthesize ApiUrl;
+@synthesize NumberOfKitties;
+@synthesize IncreaseOfInterestingness;
 
 #pragma mark Singleton Methods
 
@@ -29,6 +31,8 @@
 		NSDictionary *pfile = [NSDictionary dictionaryWithContentsOfFile:plistPath];
         
         [self setApiUrl:[pfile objectForKey:@"ApiUrl"]];
+        [self setNumberOfKitties:[pfile objectForKey:@"NumberOfKitties"]];
+        [self setIncreaseOfInterestingness:[pfile objectForKey:@"IncreaseOfInterestingness"]];
     }
     return self;
 }

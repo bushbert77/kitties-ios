@@ -22,29 +22,53 @@
 
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
 @property (nonatomic, strong) IBOutlet UILabel *loading;
+@property (nonatomic, strong) UIPickerView *sortPicker;
 @property (nonatomic, strong) NSArray *photos;
 @property (nonatomic, strong) NSNumber *total;
 @property (nonatomic, strong) NSMutableArray *data;
 @property (nonatomic, strong) NSMutableArray *pictures;
+@property (nonatomic, strong) NSMutableArray *sortOptions;
+@property (nonatomic, strong) NSString *sorting;
+@property (nonatomic, strong) NSString *previousSorting;
 @property (nonatomic, strong) UICollectionViewFlowLayout *flowLayout;
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
+@property (nonatomic, assign) BOOL allowedToLoadMore;
+@property (nonatomic, assign) BOOL scrollToTop;
+@property (nonatomic, assign) BOOL sortingHidden;
+@property (nonatomic, assign) CGFloat screenWidth;
+@property (nonatomic, assign) CGFloat screenHeight;
+@property (nonatomic, assign) CGFloat imageWidth;
+@property (nonatomic, assign) CGFloat imageHeight;
+
+@property CGRect pickerViewShownFrame;
+@property CGRect pickerViewHiddenFrame;
 
 @end
 
 @implementation ViewController
 
+// Some values that will be handy later on.
+static const NSTimeInterval kPickerAnimationTime = 0.333;
+
 // View did load
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Add info button to navigation bar
-    UIButton *infoButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
-    [infoButton addTarget:self action:@selector(showInfo:) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:infoButton];
+    // Set screensizes
+    [self setScreenSizes:[UIDevice currentDevice]];
     
-    // Set title navigation bar
-    self.title = @"Kitties";
+    // Setup sort pickerview
+    [self initSortPicker];
+    
+    // Allowed to load
+    [self setAllowedToLoadMore:YES];
+    
+    // By default scroll to top false
+    [self setScrollToTop:NO];
+    
+    // Setup navigationbar
+    [self setupNavigationBar];
     
     // Set size of pictures based on device orientation
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -54,12 +78,12 @@
     self.flowLayout = [[UICollectionViewFlowLayout alloc] init];
     
     // Set layout
-    [self setLayout:([UIDevice currentDevice])];
+    [self setLayout];
     
     // Load total amount of photos
     [self loadTotal];
     // Load photos
-    [self loadKitties:60 :0];
+    [self loadKitties:[[[Configuration sharedInstance] NumberOfKitties] intValue] :0];
     
     // Pull to refresh
     self.refreshControl = [[UIRefreshControl alloc] init];
@@ -83,6 +107,83 @@
     self.total = nil;
 }
 
+// If orientation is changed
+- (void) orientationChanged:(NSNotification *)note {
+    UIDevice * device = note.object;
+    [self setScreenSizes:device];
+    [self setLayout];
+    [self setSortPickerSizes];
+}
+// Set screensizes based on orientation
+-(void) setScreenSizes:(UIDevice *)device {
+    CGRect screenRect = [[UIScreen mainScreen] applicationFrame];
+    switch(device.orientation) {
+        case UIDeviceOrientationPortrait:
+        case UIDeviceOrientationPortraitUpsideDown:
+        case UIDeviceOrientationFaceDown:
+        case UIDeviceOrientationFaceUp:
+        case UIDeviceOrientationUnknown:
+            self.screenWidth = screenRect.size.width;
+            self.screenHeight = screenRect.size.height;
+            self.imageWidth = (self.screenWidth - 2) / 3;
+            break;
+            
+        case UIDeviceOrientationLandscapeLeft:
+        case UIDeviceOrientationLandscapeRight:
+            self.screenWidth = screenRect.size.height;
+            self.screenHeight = screenRect.size.width;
+            self.imageWidth = (self.screenWidth - 4) / 5;
+            break;
+    };
+    self.imageHeight = self.imageWidth;
+}
+
+// Init picker
+- (void)initSortPicker {
+    
+    // Set up the initial state of the picker.
+    [self setSortingHidden:YES];
+    self.sortPicker = [[UIPickerView alloc] init];
+    [self.sortPicker setDelegate:self];
+    [self.sortPicker setDataSource:self];
+    [self.sortPicker setShowsSelectionIndicator:YES];
+    [self setSortPickerSizes];
+    [self.view addSubview:self.sortPicker];
+    
+    // Add options to sort picker
+    self.sortOptions = [[NSMutableArray alloc] init];
+    [self.sortOptions addObject:@"Sort by date"];
+    [self.sortOptions addObject:@"Sort by popularity"];
+    
+    // Default sorting
+    [self setSorting:@"Sort by date"];
+    [self setPreviousSorting:self.sorting];
+}
+
+-(void)setSortPickerSizes {
+    
+    CGFloat navBarHeight = self.navigationController.navigationBar.frame.size.height;
+
+    CGFloat pickerHeight = self.sortPicker.frame.size.height;
+    CGFloat pickerXShown = self.screenHeight - navBarHeight - pickerHeight;
+    CGFloat pickerXHidden = self.screenHeight - navBarHeight;
+    
+    // Set pickerView's shown and hidden position frames.
+    self.pickerViewShownFrame = CGRectMake(0.f, pickerXShown, self.screenWidth, pickerHeight);
+    self.pickerViewHiddenFrame = CGRectMake(0.f, pickerXHidden, self.screenWidth, pickerHeight);
+    
+    [self.sortPicker setFrame:self.pickerViewHiddenFrame];
+}
+
+- (void)setupNavigationBar {
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"About" style:UIBarButtonItemStyleBordered target:self action:@selector(showInfo:)];
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sort" style:UIBarButtonItemStyleBordered target:self action:@selector(sortKitties:)];
+    
+    // Set title navigation bar
+    self.title = @"Kitties";
+}
+
 // Push info view
 -(void)showInfo: (UIBarButtonItem *)sender {
     UIViewController *infoViewController = [[InfoViewController alloc] initWithNibName:@"InfoViewController" bundle:nil];
@@ -91,8 +192,56 @@
     [self.navigationController pushViewController:infoViewController animated:YES];
 }
 
+// Sort kitties
+-(void)sortKitties: (UIBarButtonItem *)sender {
+    if(self.sortingHidden){
+        self.navigationItem.leftBarButtonItem.title = @"Done";
+        [UIView animateWithDuration:kPickerAnimationTime animations:^{
+            [self.sortPicker setFrame:self.pickerViewShownFrame];
+        } completion:^(BOOL finished){
+            if(finished)
+//                [self.sortPicker setHidden:NO];
+                [self setSortingHidden:NO];
+        }];
+    } else {
+        self.navigationItem.leftBarButtonItem.title = @"Sort";
+        [UIView animateWithDuration:kPickerAnimationTime animations:^{
+            [self.sortPicker setFrame:self.pickerViewHiddenFrame];
+        } completion:^(BOOL finished){
+            if(finished)
+//                [self.sortPicker setHidden:YES];
+                [self setSortingHidden:YES];
+        }];
+        
+        if(self.sorting != self.previousSorting){
+            [self setPreviousSorting:self.sorting];
+    
+            [self setScrollToTop:YES];
+            [self showProgressHUDWithMessage:@"Sorting kitties..."];
+            [self reloadKitties];
+        }
+    }
+}
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 1;
+}
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    [self setSorting:[self.sortOptions objectAtIndex:row]];
+    
+}
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    return [self.sortOptions count];
+}
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    return [self.sortOptions objectAtIndex:row];
+}
+
 // Load kitties again!
 -(void)handleRefresh:(UIRefreshControl *)refreshControl {
+    [self reloadKitties];
+}
+
+-(void)reloadKitties {
     self.photos = nil;
     self.data = nil;
     self.pictures = nil;
@@ -101,21 +250,35 @@
     // Load total amount of photos
     [self loadTotal];
     // Load photos
-    [self loadKitties:60 :0];
+    [self loadKitties:[[[Configuration sharedInstance] NumberOfKitties] intValue] :0];
 }
 
 // Call API to load total number of photos
 - (void)loadTotal {
     [[ApiClient sharedClient] getPath:@"total" parameters:nil success:^(AFHTTPRequestOperation *operation, id json) {
         self.total = [json objectForKey:@"total"];
-    } failure:nil];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (error){
+            [self showNetworkError:error];
+        }
+    }];
 }
 // Call API to load kitties
 - (void)loadKitties:(int)limit :(int)skip {
     
     self.navigationController.navigationBar.userInteractionEnabled = NO;
-        
+    [self setAllowedToLoadMore:NO];
+    
+    // Check for sorting
+    NSString *sortMethod = @"";
+    if(self.sorting == @"Sort by popularity"){
+        sortMethod = @"interestingness";
+    }
+    
     NSString *path = [NSString stringWithFormat:@"/list/%d/%d", limit, skip];
+    if(![sortMethod isEqualToString:@""]){
+        path = [NSString stringWithFormat:@"%@?sort=%@",path, sortMethod];
+    }
     
     [[ApiClient sharedClient] getPath:path parameters:nil success:^(AFHTTPRequestOperation *operation, id json) {
         NSMutableArray *section = [[NSMutableArray alloc] init];
@@ -127,8 +290,8 @@
         for(NSDictionary *photo in [json objectForKey:@"results"]) {
             [section addObject:photo];
         }
-            
-        self.photos = [[NSArray alloc] initWithObjects:section, nil];
+        
+        [self setPhotos:[[NSArray alloc] initWithObjects:section, nil]];
         
         [self.collectionView reloadData];
         
@@ -137,8 +300,34 @@
         [self hideProgressHUD:@"" :NO];
         [self.refreshControl endRefreshing];
         
+        // If scroll to top, scroll to top
+        if(self.scrollToTop){
+            [self.collectionView setContentOffset: CGPointZero];
+            [self setScrollToTop:NO];
+        }
+        
+        // Enable interaction again
         self.navigationController.navigationBar.userInteractionEnabled = YES;
-    } failure:nil];
+        [self setAllowedToLoadMore:YES];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (error){
+            [self showNetworkError:error];
+        }
+    }];
+}
+
+// Show error message
+- (void)showNetworkError:(NSError *)error {
+    // Hide other loaders
+    [self.loading removeFromSuperview];
+    [self.refreshControl endRefreshing];
+    [self hideProgressHUD:@"" :NO];
+    // Show error
+    self.progressHUD = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+    self.progressHUD.labelText = @"Network error!";
+    self.progressHUD.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"err_mark"]];
+    self.progressHUD.mode = MBProgressHUDModeCustomView;
+    NSLog(@"%@", [error localizedDescription]);
 }
 
 // Show activity indicator with custom message
@@ -153,7 +342,7 @@
 - (void)hideProgressHUD:(NSString *)message :(BOOL)error {
     if ([message length] > 0) {
         
-        NSString *image = error ? @"err_mark.png" : @"check_mark";
+        NSString *image = error ? @"err_mark" : @"check_mark";
         
         if (self.progressHUD.isHidden) [self.progressHUD show:YES];
         self.progressHUD.labelText = message;
@@ -166,39 +355,13 @@
     self.navigationController.navigationBar.userInteractionEnabled = YES;
 }
 
-// If orientation is changed
-- (void) orientationChanged:(NSNotification *)note
-{
-    UIDevice * device = note.object;
-    [self setLayout:(device)];
-}
-// Set layout (image size etc.)
-- (void) setLayout:(UIDevice *)device
-{
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    CGFloat screenWidth = 0;
-    CGFloat spacing = 2;
-    CGFloat imageSize = 0;
-    
-    switch(device.orientation) {
-        case UIDeviceOrientationPortrait:
-        case UIDeviceOrientationPortraitUpsideDown:
-        case UIDeviceOrientationFaceDown:
-        case UIDeviceOrientationFaceUp:
-        case UIDeviceOrientationUnknown:
-            screenWidth = screenRect.size.width - 2;
-            imageSize = (screenWidth / 2);
-            break;
-            
-        case UIDeviceOrientationLandscapeLeft:
-        case UIDeviceOrientationLandscapeRight:
-            screenWidth = screenRect.size.height - 4;
-            imageSize = (screenWidth / 3);
-            break;
-    };
+// Set layout
+- (void) setLayout {
+
+    CGFloat spacing = 1;
     
     // Configure layout
-    [self.flowLayout setItemSize:CGSizeMake(imageSize, imageSize)];
+    [self.flowLayout setItemSize:CGSizeMake(self.imageWidth,self.imageHeight)];
     [self.flowLayout setMinimumInteritemSpacing:spacing];
     [self.flowLayout setMinimumLineSpacing:spacing];
     [self.flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
@@ -258,7 +421,7 @@
     photoBrowser.displayActionButton = YES;
     
     // Action button for detail view of MWPhotoBrowser
-    photoBrowser.actionButtons = [NSArray arrayWithObjects:NSLocalizedString(@"Save", nil), nil];
+    photoBrowser.actionButtons = [NSArray arrayWithObjects:NSLocalizedString(@"Share", nil), nil];
     photoBrowser.destructiveButton = NSLocalizedString(@"Report", nil);
     photoBrowser.cancelButton = NSLocalizedString(@"Cancel", nil);
     
@@ -280,20 +443,43 @@
 - (void) photoBrowser:(MWPhotoBrowser *)photoBrowser actionIndex:(NSUInteger)index :(NSUInteger)photoIndex {
     switch(index){
         case 0:
+            // Share
+            [self showActivityView:photoIndex];
+            break;
+        case 2:
             // Report image
             [self reportImage:(photoIndex)];
             break;
-        case 1:
-            // Save image
-            [self saveImage:(photoIndex)];
-            break;
     }
 }
+
+-(void) showActivityView:(NSUInteger)photoIndex {
+    id <MWPhoto> photo = [self.pictures objectAtIndex:photoIndex];
+    NSArray *activityItems = @[@"Check this cute kitty I found thanks to the Kitties app!", [photo underlyingImage]];
+    
+    UIActivityViewController *activityController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    
+    [activityController setExcludedActivityTypes:@[UIActivityTypeAssignToContact,UIActivityTypePrint,UIActivityTypePostToWeibo]];
+    
+    [activityController setCompletionHandler:^(NSString *activityType, BOOL completed) {
+        if(completed){
+            // Increase interestingness
+            [self increaseInterestingness:photoIndex];
+        }
+    }];
+    
+    [self presentViewController:activityController animated:YES completion:nil];
+}
+
 // Save image to photo album on device
 - (void) saveImage:(NSUInteger)photoIndex {
     
     [self showProgressHUDWithMessage:@"Saving kitty..."];
     
+    // Increase interestingness
+    [self increaseInterestingness:photoIndex];
+    
+    // Get photo and save it!
     id <MWPhoto> photo = [self.pictures objectAtIndex:photoIndex];
     UIImageWriteToSavedPhotosAlbum([photo underlyingImage], self, @selector(saveImageCallback:hasBeenSavedInPhotoAlbumWithError:usingContextInfo:),NULL);
 }
@@ -304,6 +490,20 @@
     } else {
         [self hideProgressHUD:@"Kitty saved!" :NO];
     }
+}
+
+// Increase interestingness for this picture
+- (void) increaseInterestingness:(NSUInteger)photoIndex {
+    // Get json of photo based on index
+    NSDictionary *photo = [self.data objectAtIndex:photoIndex];
+    // Set new interestingness
+    NSNumber *newInterestingness = [NSNumber numberWithInteger:([[photo objectForKey:@"interestingness"] intValue] + [[[Configuration sharedInstance] IncreaseOfInterestingness] intValue])];
+    // Path to call
+    NSString *path = [NSString stringWithFormat:@"/%@", [photo objectForKey:@"externalID"]];
+    // Params
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys: newInterestingness, @"interestingness",nil];
+    // Call api!
+    [[ApiClient sharedClient] putPath:path parameters:params success:nil failure:nil];
 }
 // Report image
 - (void) reportImage:(NSUInteger)pageIndex {
@@ -322,34 +522,19 @@
 }
 
 // If user has reached the end of the collection view
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
-    CGFloat height = scrollView.frame.size.height;
-    CGFloat contentYoffset = scrollView.contentOffset.y;
-    CGFloat distanceFromBottom = scrollView.contentSize.height - contentYoffset;
+    if(self.allowedToLoadMore && [self.data count] < [self.total intValue]){
+        CGFloat height = scrollView.frame.size.height;
+        CGFloat contentYoffset = scrollView.contentOffset.y;
+        CGFloat distanceFromBottom = scrollView.contentSize.height - contentYoffset;
 
-    if(distanceFromBottom - 50 < height) {
-        if([self.data count] < [self.total intValue]){
+        if(distanceFromBottom < height) {
             [self showProgressHUDWithMessage:@"Loading more kitties..."];
-            [self loadKitties:60 :[self.data count]];
+            [self loadKitties:[[[Configuration sharedInstance] NumberOfKitties] intValue] :[self.data count]];
         }
     }
 }
-
-//// If user has reached the end of the collection view
-//-(void)scrollViewDidScroll:(UIScrollView *)scrollView {
-//    CGFloat height = scrollView.frame.size.height;
-//    CGFloat contentYoffset = scrollView.contentOffset.y;
-//    CGFloat distanceFromBottom = scrollView.contentSize.height - contentYoffset;
-//
-//    if(distanceFromBottom < height) {
-//        
-//        [self showProgressHUDWithMessage:@"Loading more kitties..."];
-//        
-//        [self loadKitties:60 :[self.data count]];
-//        
-//    }
-//}
 
 -(BOOL)shouldAutorotate {
     return YES;

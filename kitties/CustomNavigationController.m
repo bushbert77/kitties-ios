@@ -40,7 +40,7 @@
     
     [[UINavigationBar appearanceWhenContainedIn:[CustomNavigationController class], nil] setTitleTextAttributes: textTitleOptions];
     
-    [[UINavigationBar appearanceWhenContainedIn:[CustomNavigationController class], nil] setTintColor:[UIColor colorWithRed:215/255.0f green:118/255.0f blue:0/255.0f alpha:1]];
+    [[UINavigationBar appearanceWhenContainedIn:[CustomNavigationController class], nil] setTintColor:[UIColor colorWithRed:215/255.0f green:115/255.0f blue:0/255.0f alpha:1]];
     
 }
 

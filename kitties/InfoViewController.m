@@ -28,24 +28,14 @@
     return self;
 }
 
-//-(void)popView: (UIBarButtonItem *)sender {
-//    [self.navigationController popViewControllerAnimated:YES];
-//}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-//    UIImage *buttonBackground = [[UIImage imageNamed:@"back"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 25, 0, 5) resizingMode:UIImageResizingModeStretch];
-//    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(popView:)];
-//    [backButton setBackgroundImage:buttonBackground forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-//    [self.navigationItem setLeftBarButtonItem:backButton];
-//    [self.navigationItem setHidesBackButton:YES];
     
     // Set background pattern
     [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern.png"]]];
     
     // Set title navigation bar
-    self.title = @"Information";
+    self.title = @"About";
     UIFont *font = [UIFont fontWithName:@"AvenirNextCondensed-Medium" size:16];
     
     [infoText setFont:font];
@@ -57,8 +47,11 @@
     [name setFont:[UIFont fontWithName:@"AvenirNextCondensed-Medium" size:14]];
     [name setTextColor:[UIColor darkGrayColor]];
     
-    website.titleLabel.font = [UIFont fontWithName:@"AvenirNextCondensed-Medium" size:14];
-    website.titleLabel.textColor = [UIColor colorWithRed:255.0f/255.0f green:102.0f/255.0f blue:0.0f/255.0f alpha:1.0f];
+    UIColor *orange = [UIColor colorWithRed:255.0f/255.0f green:102.0f/255.0f blue:0.0f/255.0f alpha:1.0f];
+    [website.titleLabel setFont:[UIFont fontWithName:@"AvenirNextCondensed-Medium" size:14]];
+    [website setTitleColor:orange forState:UIControlStateNormal];
+    [website setTitleColor:orange forState:UIControlStateHighlighted];
+    [website setTitleColor:orange forState:UIControlStateSelected];
     [website addTarget:self action:@selector(openWebsite:) forControlEvents:UIControlEventTouchUpInside];
 }
 

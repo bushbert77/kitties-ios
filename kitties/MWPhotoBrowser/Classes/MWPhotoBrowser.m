@@ -1011,13 +1011,15 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
             self.actionsSheet = [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil, nil] autorelease];
             
-            if(self.destructiveButton){
-                self.actionsSheet.destructiveButtonIndex = [self.actionsSheet addButtonWithTitle:NSLocalizedString(self.destructiveButton, nil)];
-            }
+            
             for(NSString *action in self.actionButtons) {
                 [self.actionsSheet addButtonWithTitle:action];
             }
+            
             if(self.destructiveButton){
+                self.actionsSheet.destructiveButtonIndex = [self.actionsSheet addButtonWithTitle:NSLocalizedString(self.destructiveButton, nil)];
+            }
+            if(self.cancelButton){
                 self.actionsSheet.cancelButtonIndex = [self.actionsSheet addButtonWithTitle:NSLocalizedString(self.cancelButton, nil)];
             } else {
                 self.actionsSheet.cancelButtonIndex = [self.actionsSheet addButtonWithTitle:NSLocalizedString(@"Cancel", nil)];
