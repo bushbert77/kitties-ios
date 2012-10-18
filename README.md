@@ -1,2 +1,1 @@
-kitties-ios
-===========
+An iOS app based on the 'kitties-api'.
