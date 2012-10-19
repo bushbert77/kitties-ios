@@ -196,6 +196,9 @@
 
 // Sort kitties
 -(void)sortKitties: (UIBarButtonItem *)sender {
+    // sortPicker is always visible, but outside the screen
+    [self.sortPicker setHidden:NO];
+    
     if(self.sortingHidden){
         [self showPickerView];
     } else {
@@ -217,10 +220,7 @@
     [self.navigationItem.leftBarButtonItem setTitle:@"Sort"];
     [UIView animateWithDuration:0.33 animations:^{
         [self.sortPicker setFrame:self.sortPickerHiddenFrame];
-    } completion:^(BOOL finished){
-//        if(finished)
-//            [self setSortingHidden:YES];
-    }];
+    } completion:nil];
     [self setSortingHidden:YES];
 }
 - (void) showPickerView {
@@ -230,10 +230,7 @@
     [self.navigationItem.leftBarButtonItem setTitle:@"Done"];
     [UIView animateWithDuration:0.33 animations:^{
         [self.sortPicker setFrame:self.sortPickerShownFrame];
-    } completion:^(BOOL finished){
-//        if(finished)
-//            [self setSortingHidden:NO];
-    }];
+    } completion:nil];
     [self setSortingHidden:NO];
 }
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
@@ -445,13 +442,9 @@
     [photoBrowser setCancelButton:@"Cancel"];
     
     // Push MWPhotoBrowser to navigation controller
-    [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
-        [self.navigationController pushViewController:photoBrowser animated:YES];
-    } completion:^(BOOL finished){
-        if(finished)
-            // Show navigationbar again
-            [self showNavigationBar:YES];
-    }];
+    [self.navigationController pushViewController:photoBrowser animated:YES];
+    // Show navigationbar again
+    [self showNavigationBar:YES];
 
 }
 // Number of photos in MWPhotoBrowser
@@ -566,11 +559,11 @@
     [self setNavigationBarHidden:NO];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     [self hidePickerView];
-    [self setSortPickerSizes];
     [self.collectionView reloadData];
-    
+    [self setSortPickerSizes];
+    // To prevent showing the viewpicker in the bottom after scrolling up
+    [self.sortPicker setHidden:YES];
 //    [self performSelector:@selector(setSortPickerSizes) withObject:nil afterDelay:UINavigationControllerHideShowBarDuration];
-//    [self.collectionView reloadData];
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     self.startContentOffset = self.lastContentOffset = scrollView.contentOffset.y;
