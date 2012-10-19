@@ -99,12 +99,6 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
 // Memory warning!
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    
-    self.collectionView = nil;
-    self.photos = nil;
-    self.data = nil;
-    self.pictures = nil;
-    self.total = nil;
 }
 
 // If orientation is changed
