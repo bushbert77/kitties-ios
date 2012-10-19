@@ -170,13 +170,17 @@
     self.sortPickerShownFrame = CGRectMake(0.f, pickerXShown, self.screenWidth, pickerHeight);
     self.sortPickerHiddenFrame = CGRectMake(0.f, pickerXHidden, self.screenWidth, pickerHeight);
     
-    [self.sortPicker setFrame:self.sortPickerHiddenFrame];
+    if(self.sortingHidden){
+        [self.sortPicker setFrame:self.sortPickerHiddenFrame];
+    } else {
+        [self.sortPicker setFrame:self.sortPickerShownFrame];
+    }
 }
 
 - (void)setupNavigationBar {
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"About" style:UIBarButtonItemStyleBordered target:self action:@selector(showInfo:)];
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"About" style:UIBarButtonItemStyleBordered target:self action:@selector(showInfo:)]];
     
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sort" style:UIBarButtonItemStyleBordered target:self action:@selector(sortKitties:)];
+    [self.navigationItem setLeftBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Sort" style:UIBarButtonItemStyleBordered target:self action:@selector(sortKitties:)]];
     
     // Set title navigation bar
     [self setTitle:@"Kitties"];
@@ -214,9 +218,10 @@
     [UIView animateWithDuration:0.33 animations:^{
         [self.sortPicker setFrame:self.sortPickerHiddenFrame];
     } completion:^(BOOL finished){
-        if(finished)
-            [self setSortingHidden:YES];
+//        if(finished)
+//            [self setSortingHidden:YES];
     }];
+    [self setSortingHidden:YES];
 }
 - (void) showPickerView {
     if(!self.sortingHidden) {
@@ -226,9 +231,10 @@
     [UIView animateWithDuration:0.33 animations:^{
         [self.sortPicker setFrame:self.sortPickerShownFrame];
     } completion:^(BOOL finished){
-        if(finished)
-            [self setSortingHidden:NO];
+//        if(finished)
+//            [self setSortingHidden:NO];
     }];
+    [self setSortingHidden:NO];
 }
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     return 1;
@@ -439,7 +445,7 @@
     [photoBrowser setCancelButton:@"Cancel"];
     
     // Push MWPhotoBrowser to navigation controller
-    [UIView animateWithDuration:0.33 animations:^{
+    [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
         [self.navigationController pushViewController:photoBrowser animated:YES];
     } completion:^(BOOL finished){
         if(finished)
@@ -546,10 +552,10 @@
     }
     
     [self setNavigationBarHidden:YES];
-    [self.collectionView reloadData];
-    [self setSortPickerSizes];
-    [self setSortPickerSizes];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
+    [self hidePickerView];
+    [self setSortPickerSizes];
+    [self.collectionView reloadData];
 }
 
 - (void) showNavigationBar:(BOOL)animated {
@@ -558,11 +564,14 @@
     }
     
     [self setNavigationBarHidden:NO];
-    [self.collectionView reloadData];
-    [self setSortPickerSizes];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    [self hidePickerView];
+    [self setSortPickerSizes];
+    [self.collectionView reloadData];
+    
+//    [self performSelector:@selector(setSortPickerSizes) withObject:nil afterDelay:UINavigationControllerHideShowBarDuration];
+//    [self.collectionView reloadData];
 }
-
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     self.startContentOffset = self.lastContentOffset = scrollView.contentOffset.y;
 }
