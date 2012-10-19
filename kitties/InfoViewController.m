@@ -35,7 +35,7 @@
     [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pattern.png"]]];
     
     // Set title navigation bar
-    self.title = @"About";
+    [self setTitle:@"About"];
     UIFont *font = [UIFont fontWithName:@"AvenirNextCondensed-Medium" size:16];
     
     [infoText setFont:font];

@@ -19,9 +19,9 @@
     UIViewController *rootController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
     
     // Init navigation controller
-    self.navigationController = [[CustomNavigationController alloc] initWithRootViewController:rootController];
+    [self setNavigationController:[[CustomNavigationController alloc] initWithRootViewController:rootController]];
     
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    [self setWindow:[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]]];
     [self.window addSubview:self.navigationController.view];
     [self.window setRootViewController:self.navigationController];
     [self.window makeKeyAndVisible];

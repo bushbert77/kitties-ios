@@ -94,6 +94,8 @@
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    [self.collectionView reloadData];
+    
 }
 // Memory warning!
 - (void)didReceiveMemoryWarning {
@@ -177,7 +179,7 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sort" style:UIBarButtonItemStyleBordered target:self action:@selector(sortKitties:)];
     
     // Set title navigation bar
-    self.title = @"Kitties";
+    [self setTitle:@"Kitties"];
 }
 
 // Push info view
@@ -191,21 +193,9 @@
 // Sort kitties
 -(void)sortKitties: (UIBarButtonItem *)sender {
     if(self.sortingHidden){
-        self.navigationItem.leftBarButtonItem.title = @"Done";
-        [UIView animateWithDuration:0.33 animations:^{
-            [self.sortPicker setFrame:self.sortPickerShownFrame];
-        } completion:^(BOOL finished){
-            if(finished)
-                [self setSortingHidden:NO];
-        }];
+        [self showPickerView];
     } else {
-        self.navigationItem.leftBarButtonItem.title = @"Sort";
-        [UIView animateWithDuration:0.33 animations:^{
-            [self.sortPicker setFrame:self.sortPickerHiddenFrame];
-        } completion:^(BOOL finished){
-            if(finished)
-                [self setSortingHidden:YES];
-        }];
+        [self hidePickerView];
         
         if(self.sorting != self.previousSorting){
             [self setPreviousSorting:self.sorting];
@@ -215,6 +205,30 @@
             [self reloadKitties];
         }
     }
+}
+- (void) hidePickerView {
+    if(self.sortingHidden) {
+        return;
+    }
+    [self.navigationItem.leftBarButtonItem setTitle:@"Sort"];
+    [UIView animateWithDuration:0.33 animations:^{
+        [self.sortPicker setFrame:self.sortPickerHiddenFrame];
+    } completion:^(BOOL finished){
+        if(finished)
+            [self setSortingHidden:YES];
+    }];
+}
+- (void) showPickerView {
+    if(!self.sortingHidden) {
+        return;
+    }
+    [self.navigationItem.leftBarButtonItem setTitle:@"Done"];
+    [UIView animateWithDuration:0.33 animations:^{
+        [self.sortPicker setFrame:self.sortPickerShownFrame];
+    } completion:^(BOOL finished){
+        if(finished)
+            [self setSortingHidden:NO];
+    }];
 }
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     return 1;
@@ -250,7 +264,7 @@
 // Call API to load total number of photos
 - (void)loadTotal {
     [[ApiClient sharedClient] getPath:@"total" parameters:nil success:^(AFHTTPRequestOperation *operation, id json) {
-        self.total = [json objectForKey:@"total"];
+        [self setTotal:[json objectForKey:@"total"]];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if (error){
             [self showNetworkError:error];
@@ -317,20 +331,21 @@
     [self.refreshControl endRefreshing];
     [self hideProgressHUD:@"" :NO];
     // Show error
-    self.progressHUD = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-    self.progressHUD.labelText = @"Network error!";
-    self.progressHUD.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"err_mark"]];
-    self.progressHUD.mode = MBProgressHUDModeCustomView;
+    [self setProgressHUD:[MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES]];
+    [self.progressHUD setLabelText:@"Network error!"];
+    [self.progressHUD setCustomView:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"err_mark"]]];
+    [self.progressHUD setMode:MBProgressHUDModeCustomView];
+    
     NSLog(@"%@", [error localizedDescription]);
 }
 
 // Show activity indicator with custom message
 - (void)showProgressHUDWithMessage:(NSString *)message {
     
-    self.progressHUD = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-    self.progressHUD.labelText = message;
+    [self setProgressHUD:[MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES]];
+    [self.progressHUD setLabelText:message];
     
-    self.navigationController.navigationBar.userInteractionEnabled = NO;
+    [self.navigationController.navigationBar setUserInteractionEnabled:NO];
 }
 // Hide activity indicator with message and icon
 - (void)hideProgressHUD:(NSString *)message :(BOOL)error {
@@ -339,14 +354,14 @@
         NSString *image = error ? @"err_mark" : @"check_mark";
         
         if (self.progressHUD.isHidden) [self.progressHUD show:YES];
-        self.progressHUD.labelText = message;
-        self.progressHUD.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:image]];
-        self.progressHUD.mode = MBProgressHUDModeCustomView;
+        [self.progressHUD setLabelText:message];
+        [self.progressHUD setCustomView:[[UIImageView alloc] initWithImage:[UIImage imageNamed:image]]];
+        [self.progressHUD setMode:MBProgressHUDModeCustomView];
         [self.progressHUD hide:YES afterDelay:1.5];
     } else {
         [self.progressHUD hide:YES];
     }
-    self.navigationController.navigationBar.userInteractionEnabled = YES;
+    [self.navigationController.navigationBar setUserInteractionEnabled:YES];
 }
 
 // Set layout
@@ -398,15 +413,16 @@
 }
 // When you tap a kitty
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    // Show navigationbar again
-    [self showNavigationBar];
+    
+    // Hide picker view
+    [self hidePickerView];
     
     // Set pictures for MWPhotoBrowser
     NSMutableArray *pictures = [[NSMutableArray alloc] init];
     
     for(NSDictionary *picture in self.data) {
         MWPhoto *photo = [MWPhoto photoWithURL:[NSURL URLWithString:[picture objectForKey:@"image"]]];
-        photo.caption = [picture objectForKey:@"name"];
+        [photo setCaption:[picture objectForKey:@"name"]];
         [pictures addObject:photo];
     }
     
@@ -415,15 +431,21 @@
     // Load MWPhotoBrowser
     MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate:self];
     [photoBrowser setInitialPageIndex:[indexPath row]];
-    photoBrowser.displayActionButton = YES;
+    [photoBrowser setDisplayActionButton:YES];
     
     // Action button for detail view of MWPhotoBrowser
-    photoBrowser.actionButtons = [NSArray arrayWithObjects:NSLocalizedString(@"Share", nil), nil];
-    photoBrowser.destructiveButton = NSLocalizedString(@"Report", nil);
-    photoBrowser.cancelButton = NSLocalizedString(@"Cancel", nil);
+    [photoBrowser setActionButtons:[NSArray arrayWithObjects:NSLocalizedString(@"Share", nil), nil]];
+    [photoBrowser setDestructiveButton:@"Report"];
+    [photoBrowser setCancelButton:@"Cancel"];
     
     // Push MWPhotoBrowser to navigation controller
-    [self.navigationController pushViewController:photoBrowser animated:YES];
+    [UIView animateWithDuration:0.33 animations:^{
+        [self.navigationController pushViewController:photoBrowser animated:YES];
+    } completion:^(BOOL finished){
+        if(finished)
+            // Show navigationbar again
+            [self showNavigationBar:YES];
+    }];
 
 }
 // Number of photos in MWPhotoBrowser
@@ -518,7 +540,7 @@
     
 }
 
-- (void) hideNavigationBar {
+- (void) hideNavigationBar:(BOOL)animated {
     if(self.navigationBarHidden) {
         return;
     }
@@ -527,10 +549,10 @@
     [self.collectionView reloadData];
     [self setSortPickerSizes];
     [self setSortPickerSizes];
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
 }
 
-- (void) showNavigationBar {
+- (void) showNavigationBar:(BOOL)animated {
     if(!self.navigationBarHidden) {
         return;
     }
@@ -538,7 +560,7 @@
     [self setNavigationBarHidden:NO];
     [self.collectionView reloadData];
     [self setSortPickerSizes];
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
@@ -555,17 +577,17 @@
     CGFloat currentOffset = scrollView.contentOffset.y;
     CGFloat differenceFromStart = self.startContentOffset - currentOffset;
     CGFloat differenceFromLast = self.lastContentOffset - currentOffset;
-    self.lastContentOffset = currentOffset;
+    [self setLastContentOffset:currentOffset];
     
     if((differenceFromStart) < 0) {
         // scroll up
         if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
-            [self hideNavigationBar];
+            [self hideNavigationBar:YES];
         }
     } else {
         // scroll down
         if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
-            [self showNavigationBar];
+            [self showNavigationBar:YES];
         }
     }
     
