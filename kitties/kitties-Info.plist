@@ -8,6 +8,17 @@
 	<string>Kitties</string>
 	<key>CFBundleExecutable</key>
 	<string>kitties</string>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>icon.png</string>
+				<string>icon@2x.png</string>
+			</array>
+		</dict>
+	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>koenoe.kitties</string>
 	<key>CFBundleInfoDictionaryVersion</key>

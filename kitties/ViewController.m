@@ -200,7 +200,6 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
             [self.sortPicker setFrame:self.pickerViewShownFrame];
         } completion:^(BOOL finished){
             if(finished)
-//                [self.sortPicker setHidden:NO];
                 [self setSortingHidden:NO];
         }];
     } else {
@@ -209,7 +208,6 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
             [self.sortPicker setFrame:self.pickerViewHiddenFrame];
         } completion:^(BOOL finished){
             if(finished)
-//                [self.sortPicker setHidden:YES];
                 [self setSortingHidden:YES];
         }];
         
@@ -446,7 +444,7 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
             // Share
             [self showActivityView:photoIndex];
             break;
-        case 2:
+        case 1:
             // Report image
             [self reportImage:(photoIndex)];
             break;
