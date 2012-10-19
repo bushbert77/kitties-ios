@@ -8,11 +8,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "kitties/ViewController.m"
-         timestampString = "372284109.875758"
+         timestampString = "372366549.581191"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "49"
-         endingLineNumber = "49"
+         startingLineNumber = "51"
+         endingLineNumber = "51"
          landmarkName = "@implementation ViewController"
          landmarkType = "3">
       </FileBreakpoint>

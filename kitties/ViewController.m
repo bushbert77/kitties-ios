@@ -36,30 +36,32 @@
 @property (nonatomic, assign) BOOL allowedToLoadMore;
 @property (nonatomic, assign) BOOL scrollToTop;
 @property (nonatomic, assign) BOOL sortingHidden;
+@property (nonatomic, assign) BOOL navigationBarHidden;
 @property (nonatomic, assign) CGFloat screenWidth;
 @property (nonatomic, assign) CGFloat screenHeight;
 @property (nonatomic, assign) CGFloat imageWidth;
 @property (nonatomic, assign) CGFloat imageHeight;
-
-@property CGRect pickerViewShownFrame;
-@property CGRect pickerViewHiddenFrame;
+@property (nonatomic, assign) CGFloat startContentOffset;
+@property (nonatomic, assign) CGFloat lastContentOffset;
+@property (nonatomic, assign) CGRect sortPickerShownFrame;
+@property (nonatomic, assign) CGRect sortPickerHiddenFrame;
 
 @end
 
 @implementation ViewController
-
-// Some values that will be handy later on.
-static const NSTimeInterval kPickerAnimationTime = 0.333;
 
 // View did load
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     // Set screensizes
-    [self setScreenSizes:[UIDevice currentDevice]];
+    [self setScreenSizes];
     
     // Setup sort pickerview
     [self initSortPicker];
+    
+    // Set layout
+    [self setLayout];
     
     // Allowed to load
     [self setAllowedToLoadMore:YES];
@@ -76,9 +78,6 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
     
     [self.collectionView registerClass:[CVCell class] forCellWithReuseIdentifier:@"cvCell"];
     self.flowLayout = [[UICollectionViewFlowLayout alloc] init];
-    
-    // Set layout
-    [self setLayout];
     
     // Load total amount of photos
     [self loadTotal];
@@ -103,27 +102,26 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
 
 // If orientation is changed
 - (void) orientationChanged:(NSNotification *)note {
-    UIDevice * device = note.object;
-    [self setScreenSizes:device];
+    [self setScreenSizes];
     [self setLayout];
     [self setSortPickerSizes];
 }
 // Set screensizes based on orientation
--(void) setScreenSizes:(UIDevice *)device {
+-(void) setScreenSizes {
+    UIInterfaceOrientation orientation = [[UIDevice currentDevice] orientation];
+    
     CGRect screenRect = [[UIScreen mainScreen] applicationFrame];
-    switch(device.orientation) {
-        case UIDeviceOrientationPortrait:
-        case UIDeviceOrientationPortraitUpsideDown:
-        case UIDeviceOrientationFaceDown:
-        case UIDeviceOrientationFaceUp:
-        case UIDeviceOrientationUnknown:
+    
+    switch(orientation) {
+        case UIInterfaceOrientationPortrait:
+        case UIInterfaceOrientationPortraitUpsideDown:
             self.screenWidth = screenRect.size.width;
             self.screenHeight = screenRect.size.height;
             self.imageWidth = (self.screenWidth - 2) / 3;
             break;
             
-        case UIDeviceOrientationLandscapeLeft:
-        case UIDeviceOrientationLandscapeRight:
+        case UIInterfaceOrientationLandscapeLeft:
+        case UIInterfaceOrientationLandscapeRight:
             self.screenWidth = screenRect.size.height;
             self.screenHeight = screenRect.size.width;
             self.imageWidth = (self.screenWidth - 4) / 5;
@@ -157,16 +155,20 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
 -(void)setSortPickerSizes {
     
     CGFloat navBarHeight = self.navigationController.navigationBar.frame.size.height;
+    
+    if(self.navigationBarHidden){
+        navBarHeight = 0;
+    }
 
     CGFloat pickerHeight = self.sortPicker.frame.size.height;
     CGFloat pickerXShown = self.screenHeight - navBarHeight - pickerHeight;
     CGFloat pickerXHidden = self.screenHeight - navBarHeight;
     
     // Set pickerView's shown and hidden position frames.
-    self.pickerViewShownFrame = CGRectMake(0.f, pickerXShown, self.screenWidth, pickerHeight);
-    self.pickerViewHiddenFrame = CGRectMake(0.f, pickerXHidden, self.screenWidth, pickerHeight);
+    self.sortPickerShownFrame = CGRectMake(0.f, pickerXShown, self.screenWidth, pickerHeight);
+    self.sortPickerHiddenFrame = CGRectMake(0.f, pickerXHidden, self.screenWidth, pickerHeight);
     
-    [self.sortPicker setFrame:self.pickerViewHiddenFrame];
+    [self.sortPicker setFrame:self.sortPickerHiddenFrame];
 }
 
 - (void)setupNavigationBar {
@@ -190,16 +192,16 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
 -(void)sortKitties: (UIBarButtonItem *)sender {
     if(self.sortingHidden){
         self.navigationItem.leftBarButtonItem.title = @"Done";
-        [UIView animateWithDuration:kPickerAnimationTime animations:^{
-            [self.sortPicker setFrame:self.pickerViewShownFrame];
+        [UIView animateWithDuration:0.33 animations:^{
+            [self.sortPicker setFrame:self.sortPickerShownFrame];
         } completion:^(BOOL finished){
             if(finished)
                 [self setSortingHidden:NO];
         }];
     } else {
         self.navigationItem.leftBarButtonItem.title = @"Sort";
-        [UIView animateWithDuration:kPickerAnimationTime animations:^{
-            [self.sortPicker setFrame:self.pickerViewHiddenFrame];
+        [UIView animateWithDuration:0.33 animations:^{
+            [self.sortPicker setFrame:self.sortPickerHiddenFrame];
         } completion:^(BOOL finished){
             if(finished)
                 [self setSortingHidden:YES];
@@ -349,7 +351,7 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
 
 // Set layout
 - (void) setLayout {
-
+    
     CGFloat spacing = 1;
     
     // Configure layout
@@ -396,6 +398,9 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
 }
 // When you tap a kitty
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    // Show navigationbar again
+    [self showNavigationBar];
+    
     // Set pictures for MWPhotoBrowser
     NSMutableArray *pictures = [[NSMutableArray alloc] init];
     
@@ -513,8 +518,56 @@ static const NSTimeInterval kPickerAnimationTime = 0.333;
     
 }
 
+- (void) hideNavigationBar {
+    if(self.navigationBarHidden) {
+        return;
+    }
+    
+    [self setNavigationBarHidden:YES];
+    [self.collectionView reloadData];
+    [self setSortPickerSizes];
+    [self setSortPickerSizes];
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+}
+
+- (void) showNavigationBar {
+    if(!self.navigationBarHidden) {
+        return;
+    }
+    
+    [self setNavigationBarHidden:NO];
+    [self.collectionView reloadData];
+    [self setSortPickerSizes];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    self.startContentOffset = self.lastContentOffset = scrollView.contentOffset.y;
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate { }
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView { }
+
 // If user has reached the end of the collection view
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    
+    CGFloat currentOffset = scrollView.contentOffset.y;
+    CGFloat differenceFromStart = self.startContentOffset - currentOffset;
+    CGFloat differenceFromLast = self.lastContentOffset - currentOffset;
+    self.lastContentOffset = currentOffset;
+    
+    if((differenceFromStart) < 0) {
+        // scroll up
+        if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
+            [self hideNavigationBar];
+        }
+    } else {
+        // scroll down
+        if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
+            [self showNavigationBar];
+        }
+    }
     
     if(self.allowedToLoadMore && [self.data count] < [self.total intValue]){
         CGFloat height = scrollView.frame.size.height;
