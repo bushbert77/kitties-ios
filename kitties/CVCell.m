@@ -13,8 +13,7 @@
 @synthesize photo = _photo;
 @synthesize loading = _loading;
 
-- (id)initWithFrame:(CGRect)frame
-{
+- (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         

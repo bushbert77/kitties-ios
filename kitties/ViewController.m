@@ -90,13 +90,7 @@
     [self.collectionView addSubview:self.refreshControl];
     
 }
-// View appears
--(void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    [self.collectionView reloadData];
-    
-}
+
 // Memory warning!
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -443,8 +437,9 @@
     
     // Push MWPhotoBrowser to navigation controller
     [self.navigationController pushViewController:photoBrowser animated:YES];
+    
     // Show navigationbar again
-    [self showNavigationBar:YES];
+//    [self showNavigationBar:YES];
 
 }
 // Number of photos in MWPhotoBrowser
@@ -546,6 +541,7 @@
     
     [self setNavigationBarHidden:YES];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
+    
     [self hidePickerView];
     [self setSortPickerSizes];
     [self.collectionView reloadData];
@@ -558,12 +554,12 @@
     
     [self setNavigationBarHidden:NO];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
-    [self hidePickerView];
-    [self.collectionView reloadData];
-    [self setSortPickerSizes];
+    
     // To prevent showing the viewpicker in the bottom after scrolling up
     [self.sortPicker setHidden:YES];
-//    [self performSelector:@selector(setSortPickerSizes) withObject:nil afterDelay:UINavigationControllerHideShowBarDuration];
+    [self hidePickerView];
+    [self setSortPickerSizes];
+    [self.collectionView reloadData];
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     self.startContentOffset = self.lastContentOffset = scrollView.contentOffset.y;
@@ -576,21 +572,29 @@
 // If user has reached the end of the collection view
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
+//    CGFloat currentOffset = scrollView.contentOffset.y;
+//    CGFloat differenceFromStart = self.startContentOffset - currentOffset;
+//    CGFloat differenceFromLast = self.lastContentOffset - currentOffset;
+//    [self setLastContentOffset:currentOffset];
+//
+//    if((differenceFromStart) < 0) {
+//        // scroll up
+//        if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
+//            [self hideNavigationBar:YES];
+//        }
+//    } else {
+//        // scroll down
+//        if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
+//            [self showNavigationBar:YES];
+//        }
+//    }
+    
     CGFloat currentOffset = scrollView.contentOffset.y;
-    CGFloat differenceFromStart = self.startContentOffset - currentOffset;
     CGFloat differenceFromLast = self.lastContentOffset - currentOffset;
     [self setLastContentOffset:currentOffset];
     
-    if((differenceFromStart) < 0) {
-        // scroll up
-        if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
-            [self hideNavigationBar:YES];
-        }
-    } else {
-        // scroll down
-        if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
-            [self showNavigationBar:YES];
-        }
+    if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
+        [self hidePickerView];
     }
     
     if(self.allowedToLoadMore && [self.data count] < [self.total intValue]){

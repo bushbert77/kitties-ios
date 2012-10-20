@@ -47,7 +47,7 @@
     [name setFont:[UIFont fontWithName:@"AvenirNextCondensed-Medium" size:14]];
     [name setTextColor:[UIColor darkGrayColor]];
     
-    UIColor *orange = [UIColor colorWithRed:255.0f/255.0f green:102.0f/255.0f blue:0.0f/255.0f alpha:1.0f];
+    UIColor *orange = [UIColor colorWithRed:250/255.0f green:121/255.0f blue:53/255.0f alpha:1.0f];
     [website.titleLabel setFont:[UIFont fontWithName:@"AvenirNextCondensed-Medium" size:14]];
     [website setTitleColor:orange forState:UIControlStateNormal];
     [website setTitleColor:orange forState:UIControlStateHighlighted];
