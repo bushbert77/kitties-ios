@@ -155,7 +155,7 @@
     if(self.navigationBarHidden){
         navBarHeight = 0;
     }
-
+    
     CGFloat pickerHeight = self.sortPicker.frame.size.height;
     CGFloat pickerXShown = self.screenHeight - navBarHeight - pickerHeight;
     CGFloat pickerXHidden = self.screenHeight - navBarHeight;
@@ -200,7 +200,7 @@
         
         if(self.sorting != self.previousSorting){
             [self setPreviousSorting:self.sorting];
-    
+            
             [self setScrollToTop:YES];
             [self showProgressHUDWithMessage:@"Sorting kitties..."];
             [self reloadKitties];
@@ -271,8 +271,9 @@
 // Call API to load kitties
 - (void)loadKitties:(int)limit :(int)skip {
     
-    self.navigationController.navigationBar.userInteractionEnabled = NO;
+    [self.navigationController.navigationBar setUserInteractionEnabled:NO];
     [self setAllowedToLoadMore:NO];
+    [self.collectionView setUserInteractionEnabled:NO];
     
     // Check for sorting
     NSString *sortMethod = @"";
@@ -287,7 +288,7 @@
     
     [[ApiClient sharedClient] getPath:path parameters:nil success:^(AFHTTPRequestOperation *operation, id json) {
         NSMutableArray *section = [[NSMutableArray alloc] init];
-            
+        
         if([self.data count] > 0){
             section = self.data;
         }
@@ -312,8 +313,9 @@
         }
         
         // Enable interaction again
-        self.navigationController.navigationBar.userInteractionEnabled = YES;
+        [self.navigationController.navigationBar setUserInteractionEnabled:YES];
         [self setAllowedToLoadMore:YES];
+        [self.collectionView setUserInteractionEnabled:YES];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if (error){
             [self showNetworkError:error];
@@ -398,7 +400,7 @@
     
     // Get photo
     NSDictionary *photo = [self.data objectAtIndex:[indexPath row]];
-
+    
     // Set image of cell
     [cell.photo setImageWithURL:[NSURL URLWithString:[photo objectForKey:@"thumbnail"]] success:^(UIImage *image) {
         [cell.loading removeFromSuperview];
@@ -439,8 +441,8 @@
     [self.navigationController pushViewController:photoBrowser animated:YES];
     
     // Show navigationbar again
-//    [self showNavigationBar:YES];
-
+    //    [self showNavigationBar:YES];
+    
 }
 // Number of photos in MWPhotoBrowser
 - (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
@@ -572,22 +574,22 @@
 // If user has reached the end of the collection view
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
-//    CGFloat currentOffset = scrollView.contentOffset.y;
-//    CGFloat differenceFromStart = self.startContentOffset - currentOffset;
-//    CGFloat differenceFromLast = self.lastContentOffset - currentOffset;
-//    [self setLastContentOffset:currentOffset];
-//
-//    if((differenceFromStart) < 0) {
-//        // scroll up
-//        if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
-//            [self hideNavigationBar:YES];
-//        }
-//    } else {
-//        // scroll down
-//        if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
-//            [self showNavigationBar:YES];
-//        }
-//    }
+    //    CGFloat currentOffset = scrollView.contentOffset.y;
+    //    CGFloat differenceFromStart = self.startContentOffset - currentOffset;
+    //    CGFloat differenceFromLast = self.lastContentOffset - currentOffset;
+    //    [self setLastContentOffset:currentOffset];
+    //
+    //    if((differenceFromStart) < 0) {
+    //        // scroll up
+    //        if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
+    //            [self hideNavigationBar:YES];
+    //        }
+    //    } else {
+    //        // scroll down
+    //        if(scrollView.isTracking && (abs(differenceFromLast)>1)) {
+    //            [self showNavigationBar:YES];
+    //        }
+    //    }
     
     CGFloat currentOffset = scrollView.contentOffset.y;
     CGFloat differenceFromLast = self.lastContentOffset - currentOffset;
@@ -601,7 +603,7 @@
         CGFloat height = scrollView.frame.size.height;
         CGFloat contentYoffset = scrollView.contentOffset.y;
         CGFloat distanceFromBottom = scrollView.contentSize.height - contentYoffset;
-
+        
         if(distanceFromBottom < height) {
             [self showProgressHUDWithMessage:@"Loading more kitties..."];
             [self loadKitties:[[[Configuration sharedInstance] NumberOfKitties] intValue] :[self.data count]];

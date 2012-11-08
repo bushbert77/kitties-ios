@@ -24,10 +24,6 @@
 		5D51A074162834F200FFA538 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A072162834F200FFA538 /* ViewController.xib */; };
 		5D51A098162836E200FFA538 /* GiddyupStd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A086162836E200FFA538 /* GiddyupStd.otf */; };
 		5D51A099162836E200FFA538 /* GiddyupStd.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A087162836E200FFA538 /* GiddyupStd.ttf */; };
-		5D51A09A162836E200FFA538 /* icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A089162836E200FFA538 /* icon-72.png */; };
-		5D51A09B162836E200FFA538 /* icon-small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A08A162836E200FFA538 /* icon-small-50.png */; };
-		5D51A09C162836E200FFA538 /* icon-small.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A08B162836E200FFA538 /* icon-small.png */; };
-		5D51A09D162836E200FFA538 /* icon-small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A08C162836E200FFA538 /* icon-small@2x.png */; };
 		5D51A0A0162836E200FFA538 /* navigation-bar-bg-landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A08F162836E200FFA538 /* navigation-bar-bg-landscape.png */; };
 		5D51A0A1162836E200FFA538 /* navigation-bar-bg-landscape@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A090162836E200FFA538 /* navigation-bar-bg-landscape@2x.png */; };
 		5D51A0A2162836E200FFA538 /* navigation-bar-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D51A091162836E200FFA538 /* navigation-bar-bg.png */; };
@@ -105,10 +101,6 @@
 		5D51A084162836E200FFA538 /* Configuration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Configuration.h; sourceTree = "<group>"; };
 		5D51A086162836E200FFA538 /* GiddyupStd.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GiddyupStd.otf; sourceTree = "<group>"; };
 		5D51A087162836E200FFA538 /* GiddyupStd.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GiddyupStd.ttf; sourceTree = "<group>"; };
-		5D51A089162836E200FFA538 /* icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-72.png"; sourceTree = "<group>"; };
-		5D51A08A162836E200FFA538 /* icon-small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-small-50.png"; sourceTree = "<group>"; };
-		5D51A08B162836E200FFA538 /* icon-small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-small.png"; sourceTree = "<group>"; };
-		5D51A08C162836E200FFA538 /* icon-small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-small@2x.png"; sourceTree = "<group>"; };
 		5D51A08F162836E200FFA538 /* navigation-bar-bg-landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg-landscape.png"; sourceTree = "<group>"; };
 		5D51A090162836E200FFA538 /* navigation-bar-bg-landscape@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg-landscape@2x.png"; sourceTree = "<group>"; };
 		5D51A091162836E200FFA538 /* navigation-bar-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navigation-bar-bg.png"; sourceTree = "<group>"; };
@@ -323,10 +315,6 @@
 				5DDE7580162985B800E362B5 /* check_mark@2x.png */,
 				5DDE7581162985B800E362B5 /* err_mark.png */,
 				5DDE7582162985B800E362B5 /* err_mark@2x.png */,
-				5D51A089162836E200FFA538 /* icon-72.png */,
-				5D51A08A162836E200FFA538 /* icon-small-50.png */,
-				5D51A08B162836E200FFA538 /* icon-small.png */,
-				5D51A08C162836E200FFA538 /* icon-small@2x.png */,
 				5D51A08F162836E200FFA538 /* navigation-bar-bg-landscape.png */,
 				5D51A090162836E200FFA538 /* navigation-bar-bg-landscape@2x.png */,
 				5D51A091162836E200FFA538 /* navigation-bar-bg.png */,
@@ -554,10 +542,6 @@
 				5D51A074162834F200FFA538 /* ViewController.xib in Resources */,
 				5D51A098162836E200FFA538 /* GiddyupStd.otf in Resources */,
 				5D51A099162836E200FFA538 /* GiddyupStd.ttf in Resources */,
-				5D51A09A162836E200FFA538 /* icon-72.png in Resources */,
-				5D51A09B162836E200FFA538 /* icon-small-50.png in Resources */,
-				5D51A09C162836E200FFA538 /* icon-small.png in Resources */,
-				5D51A09D162836E200FFA538 /* icon-small@2x.png in Resources */,
 				5D51A0A0162836E200FFA538 /* navigation-bar-bg-landscape.png in Resources */,
 				5D51A0A1162836E200FFA538 /* navigation-bar-bg-landscape@2x.png in Resources */,
 				5D51A0A2162836E200FFA538 /* navigation-bar-bg.png in Resources */,

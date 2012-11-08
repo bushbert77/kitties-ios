@@ -10,14 +10,8 @@
 
 @interface InfoViewController : UIViewController {
     IBOutlet UILabel *infoText;
-    IBOutlet UILabel *infoText2;
-    IBOutlet UILabel *name;
-    IBOutlet UIButton *website;
 }
 
 @property (nonatomic, retain) UILabel *infoText;
-@property (nonatomic, retain) UILabel *infoText2;
-@property (nonatomic, retain) UILabel *name;
-@property (nonatomic, retain) UIButton *website;
 
 @end
